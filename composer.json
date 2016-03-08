@@ -1,0 +1,10 @@
+{
+    "name": "stalker_1/monero-php",
+    "authors": [
+        {
+            "name": "Brendan Telzrow",
+            "email": "telzrowb@gmail.com"
+        }
+    ],
+    "require": {}
+}
