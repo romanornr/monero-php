@@ -23,9 +23,9 @@ class Wallet
      * @param $params
      * @return string
      */
-    public function _request($method, $params)
+    public function _request($body)
     {
-        $response = $this->client->send($this->client->request(0, $method));
+        $response = $this->client->send($this->client->request(0, $body['method']));
         $response = json_decode($response->getBody());
         return json_encode($response->result);
     }
@@ -35,9 +35,8 @@ class Wallet
      */
     public function getBalance()
     {
-        $method = 'getbalance';
-        $params = '';
-        $balance = $this->_request($method, $params);
+        $body = ['method' => 'getbalance'];
+        $balance = $this->_request($body);
         return $balance;
     }
 
@@ -46,13 +45,34 @@ class Wallet
      */
     public function getAddress()
     {
-        $method = 'getaddress';
-        $params = '';
-        $address = $this->_request($method, $params);
+        $body = ['method' => 'getaddress'];
+        $address = $this->_request($body);
         return $address;
     }
 
     /**
-     *
+     * Return the current block height
      */
+    public function getHeight()
+    {
+        $body = ['method' => 'getheight'];
+        $height = $this->_request($body);
+        return $height;
+    }
+
+    /**
+     * Transfer Monero to a single recipient or group of recipients
+     */
+    public function transfer($options)
+    {
+        $body = [
+            'method' => 'transfer',
+            'destinations' => [$options['destinations']],
+            'mixin' => ($options['mixin'] ? $options['mixin'] : 4),
+            'unlock_time' => ($options['unlock_time'] ? $options['unlock_time'] : 0),
+            'payment_id' => ($options['payment_id'] ? $options['payment_id'] : null)
+        ];
+        $tx_hash = $this->request($body);
+        return $tx_hash;
+    }
 }

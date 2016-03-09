@@ -10,6 +10,8 @@ $wallet = new Monero\Wallet($hostname, $port);
 
 $balance = $wallet->getBalance();
 $address = $wallet->getAddress();
+$height = $wallet->getHeight();
 
 echo $balance;
 echo $address;
+echo $height;
