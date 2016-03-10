@@ -1,9 +1,11 @@
 # Monero-PHP
 
 A PHP library for the Monero `simplewallet` JSON-RPC interface. 
+
 For more information about Monero, please visit https://getmonero.org/home.
 
 If you found this useful, feel free to donate!
+
 XMR: `47Vmj6BXSRPax69cVdqVP5APVLkcxxjjXdcP9fJWZdNc5mEpn3fXQY1CFmJDvyUXzj2Fy9XafvUgMbW91ZoqwqmQ6RjbVtp`
 
 ## Installation
