@@ -1,5 +1,5 @@
 {
-    "name": "PsychicCat/monero-php",
+    "name": "psychiccat/monero-php",
     "description": "A PHP library for the Monero simplewallet JSON-RPC interface.",
     "keywords": ["Monero", "Poloniex", "cryptocurrency", "Shapeshift"],
     "type": "library",
