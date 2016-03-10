@@ -2,6 +2,7 @@
     "name": "psychiccat/monero-php",
     "description": "A PHP library for the Monero simplewallet JSON-RPC interface.",
     "keywords": ["Monero", "Poloniex", "cryptocurrency", "Shapeshift"],
+    "homepage": "https://github.com/PsychicCat/monero-php",
     "type": "library",
     "license": "MIT",
     "authors": [
