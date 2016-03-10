@@ -17,6 +17,7 @@ Install the library using Composer.
 ## Create an Instance of the Wallet
 
 ```php
+require 'vendor/autoload.php';
 use Monero\Wallet;
 
 $wallet = new Monero\Wallet();
