@@ -1,5 +1,6 @@
 {
     "name": "PsychicCat/monero-php",
+    "description": "A PHP library for the Monero simplewallet JSON-RPC interface.",
     "authors": [
         {
             "name": "Brendan Telzrow",
