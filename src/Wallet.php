@@ -13,13 +13,13 @@ class Wallet
      */
     function __construct($hostname = 'http://127.0.0.1', $port = 18082)
     {
-        $url = $hostname . ':' . $port . '/json_rpc';
+        $url = $hostname.':'.$port .'/json_rpc';
         $this->client = Client::factory($url);
     }
 
     /**
      * Helper function for creating wallet requests
-     * @param $body array
+     * @param array $body
      * @return string
      */
     public function _request($body)
@@ -36,6 +36,49 @@ class Wallet
         } else {
             return json_encode($response->result);
         }
+    }
+
+    /**
+     * Helper function for building transfer or transfer split request body
+     * @param array $options
+     * @return string
+     */
+    public function _buildTransfer($options)
+    {
+        $destinations = $options['destinations'];
+        // Convert Monero amount to atomic units
+        if(gettype($destinations) == "object"){
+            $destinations->amount = $destinations->amount * 1e12;
+            $destinations = array($destinations);
+        } else {
+            foreach ($destinations as &$destination){
+                $destination->amount = $destination->amount * 1e12;
+            }
+        }
+        // Define Mixin
+        $mixin = (isset($options['mixin']) ? $options['mixin'] : 4);
+        // Define Unlock Time
+        $unlock_time = (isset($options['unlock_time']) ? $options['unlock_time'] : 0);
+        // Define Payment ID
+        $payment_id = (isset($options['payment_id']) ? $options['payment_id'] : null);
+        // Build params array
+        $params = [
+            'destinations' => $destinations,
+            'mixin' => $mixin,
+            'unlock_time' => $unlock_time,
+            'payment_id' => $payment_id
+        ];
+        // Set algorithm type if using transfer_split method
+        if($options['method'] == "transfer_split"){
+            $new_algorithm = (isset($options['new_algorithm']) ? $options['new_algorithm'] : false);
+            $params['new_algorithm'] = $new_algorithm;
+        }
+        // Build request body
+        $body = [
+            'method' => $options['method'],
+            'params' => $params
+        ];
+        return $body;
     }
 
     /**
@@ -59,7 +102,8 @@ class Wallet
     }
 
     /**
-     * Return the current block height
+     * Return the current block height.
+     * @return string
      */
     public function getHeight()
     {
@@ -69,39 +113,31 @@ class Wallet
 
     /**
      * Transfer Monero to a single recipient or group of recipients
-     * @param $options
+     * @param array $options
      * @return string
      */
     public function transfer($options)
     {
-        // Convert amount to atomic units
-        $options['destinations']['amount'] = $options['destinations']['amount'] * 1e12;
-        // Define Mixin
-        $mixin = (isset($options['mixin']) ? $options['mixin'] : 4);
-        // Define Unlock Time
-        $unlock_time = (isset($options['unlock_time']) ? $options['unlock_time'] : 0);
-        // Define Payment ID
-        $payment_id = (isset($options['payment_id']) ? $options['payment_id'] : null);
-        $params = [
-            'destinations' => [$options['destinations']],
-            'mixin' => $mixin,
-            'unlock_time' => $unlock_time,
-            'payment_id' => $payment_id
-        ];
-        $body = [
-            'method' => 'transfer',
-            'params' => $params
-        ];
+        $options['method'] = 'transfer';
+        $body = $this->_buildTransfer($options);
         return $this->_request($body);
     }
 
+    /**
+     * Same as transfer(), but can split into more than one transaction if necessary.
+     * @param array $options
+     * @return string
+     */
     public function transferSplit($options)
     {
-
+        $options['method'] = 'transfer_split';
+        $body = $this->_buildTransfer($options);
+        return $this->_request($body);
     }
 
     /**
      * Send all dust output back to the wallet with mixin 0
+     * @return string
      */
     public function sweepDust()
     {
@@ -110,7 +146,8 @@ class Wallet
     }
 
     /**
-     * Save the blockchain
+     * Save the blockchain.
+     * @return string
      */
     public function store()
     {
@@ -120,6 +157,8 @@ class Wallet
 
     /**
      * Get a list of incoming payments from a given payment ID
+     * @param $payment_id
+     * @return string
      */
     public function getPayments($payment_id)
     {
@@ -132,16 +171,27 @@ class Wallet
     }
 
     /**
-     * Get a list of incoming payments from a single payment ID or list of payment IDs from a given height
+     * Get a list of incoming payments from a single payment ID or list of payment IDs from a given height.
+     * @param $payment_ids array
+     * @param $height int
+     * @return string
      */
     public function getBulkPayments($payment_ids, $height)
     {
-
+        $params = [
+            'payment_ids' => $payment_ids,
+            'min_block_height' => $height
+        ];
+        $body = [
+            'method' => 'get_bulk_payments',
+            'params' => $params
+        ];
+        return $this->_request($body);
     }
 
     /**
      * Return a list of incoming transfers to the wallet.
-     * @param $type
+     * @param $type string
      * @return string
      */
     public function incomingTransfers($type)
@@ -169,9 +219,19 @@ class Wallet
         return $this->_request($body);
     }
 
-    public function integratedAddress($payment_id)
+    /**
+     * Make an integrated address from the wallet address and a payment id.
+     * @param string $payment_id
+     * @return string
+     */
+    public function integratedAddress($payment_id = null)
     {
-
+        $params = ['payment_id' => $payment_id];
+        $body = [
+            'method' => 'make_integrated_address',
+            'params' => $params
+        ];
+        return $this->_request($body);
     }
 
     /**
