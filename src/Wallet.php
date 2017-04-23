@@ -6,6 +6,7 @@ use Graze\GuzzleHttp\JsonRpc\Client;
 
 class Wallet
 {
+    //test
     /**
      * Wallet constructor.
      * @param string $hostname
