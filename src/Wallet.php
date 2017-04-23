@@ -9,13 +9,11 @@ class Wallet
     //test
     /**
      * Wallet constructor.
-     * @param string $hostname
-     * @param int $port
+     * @param string $url
      */
-    function __construct($hostname = 'http://127.0.0.1', $port = 18082)
+    function __construct($url = "127.0.0.1:18082/json_rpc")
     {
-        $url = $hostname.':'.$port .'/json_rpc';
-        $this->client = Client::factory($url);
+      $this->client = Client::factory($url);
     }
 
     /**
@@ -25,18 +23,18 @@ class Wallet
      */
     public function _request($body)
     {
-        if(isset($body['params'])){
-            $response = $this->client->send($this->client->request(0, $body['method'], $body['params']));
-        } else {
-            $response = $this->client->send($this->client->request(0, $body['method']));
-        }
-        $response = json_decode($response->getBody());
-        // if there is an error, return the error message otherwise respond with result
-        if(property_exists($response, 'error')){
-            return json_encode($response->error);
-        } else {
-            return json_encode($response->result);
-        }
+         if(isset($body['params'])){
+             $response = $this->client->send($this->client->request(0, $body['method'], $body['params']));
+         } else {
+             $response = $this->client->send($this->client->request(0, $body['method']));
+         }
+         $response = json_decode($response->getBody());
+         // if there is an error, return the error message otherwise respond with result
+         if(property_exists($response, 'error')){
+             return $response->error;
+         } else {
+             return $response->result;
+         }
     }
 
     /**
@@ -99,6 +97,7 @@ class Wallet
     public function getAddress()
     {
         $body = ['method' => 'getaddress'];
+        return response()->json($this->_request($body));
         return $this->_request($body);
     }
 
@@ -111,7 +110,6 @@ class Wallet
         $body = ['method' => 'getheight'];
         return $this->_request($body);
     }
-
     /**
      * Transfer Monero to a single recipient or group of recipients
      * @param array $options
