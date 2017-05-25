@@ -11,9 +11,15 @@ class Wallet
      * Wallet constructor.
      * @param string $url
      */
-    function __construct($url = "127.0.0.1:18082/json_rpc")
+
+    private $config = [];
+
+    function __construct($url = "127.0.0.1:18082/json_rpc", $username = null, $password = null)
     {
-      $this->client = Client::factory($url);
+        if($username && $password)
+            $this->config['auth'] = [$username, $password, 'digest'];
+
+        $this->client = Client::factory($url, $this->config);
     }
 
     /**
