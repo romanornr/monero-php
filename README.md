@@ -12,7 +12,7 @@ XMR: `47Vmj6BXSRPax69cVdqVP5APVLkcxxjjXdcP9fJWZdNc5mEpn3fXQY1CFmJDvyUXzj2Fy9Xafv
 
 Install the library using Composer.
     
-    composer require psychiccat/monero-php
+    composer require romanornr/monero-php
 
 ## Create an Instance of the Wallet
 
