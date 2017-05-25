@@ -28,10 +28,10 @@ Default hostname and port connects to http://127.0.0.1:18082.
 To connect to an external IP or different port:
 
 ```php
-$hostname = YOUR_WALLET_IP;
-$port = YOUR_WALLET_PORT;
-$wallet = new Monero\Wallet($hostname, $port);
+$url = YOUR_WALLET_IP:YOUR_WALLET_PORT;
+$wallet = new Monero\Wallet($url, $username, $password);
 ```
+Username and password are optional.
 
 ## Wallet Methods
 
